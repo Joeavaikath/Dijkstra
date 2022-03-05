@@ -15,8 +15,19 @@
 struct result {
         std::list<int> path;
         int maxCloseSize = 0;
-        int maxOpenSize = 1;
+        int maxOpenSize = 0;
 
+};
+
+// Vertex struct with distance
+struct vertexDistance {
+    int id;
+    int distance;
+
+    vertexDistance(int startNode, int distance) {
+        this->id = startNode;
+        this->distance = distance;
+    }
 };
 
 
@@ -30,11 +41,7 @@ class Dijkstra {
     // Returns the shortest path list
     result pathFindDijkstra(Graph graph, int startNode, int endNode) {
 
-        // Vertex struct with distance
-        struct vertexDistance {
-            int id;
-            int distance;
-        };
+        
        
         // https://stackoverflow.com/questions/19535644/how-to-use-the-priority-queue-stl-for-objects
         // How to use priority queue for objects
@@ -52,7 +59,8 @@ class Dijkstra {
         std::set<int> closedList;
         std::set<int> openList;
 
-        std::priority_queue<vertexDistance> openQuery;
+        // (Priority queue type, vector for storage, comparison operation)
+        std::priority_queue<vertexDistance, std::vector<vertexDistance>, LessThanByCost> openQuery;
 
     
         int V = matrix.size();
@@ -81,14 +89,19 @@ class Dijkstra {
     
         // Find shortest path
         // for all vertices
-        for (int count = 0; count < V - 1; count++){
+
+        openQuery.push(vertexDistance(startNode, 0));
+        while(openQuery.size() > 0){
 
             // Pick the minimum distance
             // vertex from the set of
             // vertices not yet processed. 
             // u is always equal to src
             // in first iteration.
-            int u = minDistance(dist, closed, V);
+            while(closed[openQuery.top().id]) 
+                openQuery.pop();
+            
+            int u = openQuery.top().id;
 
 
             // Destination node selected, we are done
@@ -126,6 +139,8 @@ class Dijkstra {
                     res.maxOpenSize++;
                     
                     dist[v] = dist[u] + matrix[u][v];
+                    // Update element with vertex value v to new distance value v
+                    openQuery.push(vertexDistance(v, dist[v]));
                 } 
             }
         }
