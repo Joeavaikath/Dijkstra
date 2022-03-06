@@ -1,5 +1,5 @@
-#ifndef DIJKSTRA_H
-#define DIJKSTRA_H
+#ifndef ASTAR_H
+#define ASTAR_H
 #include "graph.h"
 #include <bits/stdc++.h>
 #include <set>
@@ -13,7 +13,9 @@
 
 
 
-class Dijkstra {
+
+
+class aStar {
 
 
     
@@ -21,8 +23,9 @@ class Dijkstra {
     
     public:
     // Returns the shortest path list
-    result pathFindDijkstra(Graph graph, int startNode, int endNode) {
+    result pathFind_AStar(Graph graph, int startNode, int endNode) {
 
+        
        
         // https://stackoverflow.com/questions/19535644/how-to-use-the-priority-queue-stl-for-objects
         // How to use priority queue for objects
@@ -35,6 +38,7 @@ class Dijkstra {
         };   
         
         std::vector<std::vector<int>> matrix = graph.getAdjMat();
+        std::vector<std::pair<int,int>>  coordinates = graph.getCoordinates();
         result res;
 
         std::set<int> closedList;
@@ -72,21 +76,19 @@ class Dijkstra {
         // for all vertices
 
         openQuery.push(vertexDistance(startNode, 0));
-        //while(openQuery.size() > 0)
         for (int count = 0; count < V - 1; count++){
-
 
             // Pick the minimum distance
             // vertex from the set of
             // vertices not yet processed. 
             // u is always equal to src
             // in first iteration.
-
             // while(closed[openQuery.top().id]) 
             //     openQuery.pop();
             
             // int u = openQuery.top().id;
             int u = minDistance(dist, closed, V);
+
 
             // Destination node selected, we are done
             if(u == endNode) 
@@ -98,14 +100,11 @@ class Dijkstra {
             closed[u] = true;
             closedList.insert(u);
             openList.erase(u);
-
     
             // Update dist value of the 
             // adjacent vertices of the
             // picked vertex.
             for (int v = 0; v < V; v++){
-
-                
     
                 // Update dist[v] only if is
                 // not in sptSet, there is
@@ -117,36 +116,35 @@ class Dijkstra {
 
                 // printf("\n %d %d", closed[v], matrix[u][v]);
                 // printf("\n %d %d %d", dist[u],  matrix[u][v], dist[v]);
-            
-                if (!closed[v] && matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
-                {   
 
+            
+                if (matrix[u][v]!=0  && dist[u] + matrix[u][v] + heuristic(u, endNode, coordinates) < dist[v])
+                {   
                     
                     parent[v] = u;
                     if(openList.find(v) == openList.end())
                         openList.insert(v);
-                    
+
                     res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
 
                     
-                    dist[v] = dist[u] + matrix[u][v];
+                    dist[v] = dist[u] + matrix[u][v] + heuristic(u, endNode, coordinates);
                     // Update element with vertex value v to new distance value v
                     //openQuery.push(vertexDistance(v, dist[v]));
                 } 
             }
         }
+
         
         
 
         while(endNode != -1) {
             // printf("\n %d %d", endNode, parent[endNode]);
-
             res.path.push_front(endNode);
             endNode = parent[endNode];
         }
 
         res.maxCloseSize = closedList.size();
-        
 
         return res;
    
@@ -169,6 +167,21 @@ class Dijkstra {
 
         return minVertex;
 
+    }
+
+    int heuristic(int source, int destination, std::vector<std::pair<int,int>> coordinates) {
+
+        // Calculates and returns the heuristic estimation between the source and destination
+
+
+        int x = coordinates[source].first - coordinates[destination].first;
+        int y = coordinates[source].second - coordinates[destination].second;
+
+        // Manhattan distance
+        // return abs(x) + abs(y);
+
+        // Euclidean distance
+        return sqrt(pow(x,2) + pow(y,2));
     }
 
 
