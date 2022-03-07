@@ -18,25 +18,25 @@ int main() {
     // PARAMETERS HERE:
 
     // Size, preferably in perfect squares.
-    int matSize = 100;   
+    int matSize = 2025;   
     // Source and destination
     int source = 0;     
-    int destination = 99;
+    int destination = 899;
     int obstacleChance = 40;
 
     std::vector<std::pair<int,int>> coordinates;
 
     setCoordinates(coordinates, matSize);
 
-    // visualizeGraph(matSize, obstacles, obstacleChance, source, destination);
+    visualizeGraph(matSize, obstacles, obstacleChance, source, destination);
 
     // Custom obstacles
-    obstacles = {51, 52, 53,54,55,45, 35, 25, 15};
-    visualizeGraph(matSize, obstacles);
+    // obstacles = {51, 52, 53,54,55,45, 35, 25, 15};
+    // visualizeGraph(matSize, obstacles);
 
-    printf("\n Obstacles are: ");
-    for(int i:obstacles)
-        printf("%d ", i);
+    // printf("\n Obstacles are: ");
+    // for(int i:obstacles)
+    //     printf("%d ", i);
     
 
     initializeConnections(coordinates, matSize, matrix, obstacles);
@@ -56,6 +56,7 @@ int main() {
     result answer3 = star2.pathFind_AStar(g, source ,destination);
 
     printf("\n\n---------DIJKS---------\n\n");
+    printf("\n Path Length: %d\n", (int)answer.path.size());
     for(int i: answer.path) {
         printf("%d-->", i);
     }
@@ -64,6 +65,7 @@ int main() {
 
 
     printf("\n\n--------ASTAR---------\n\n");
+    printf("\n Path Length: %d\n", (int)answer2.path.size());
     for(int i: answer2.path) {
         printf("%d-->", i);
     }
@@ -71,6 +73,7 @@ int main() {
     printf("\n Max open list size: %d\n Max closed list size: %d", answer2.maxOpenSize, answer2.maxCloseSize);
 
     printf("\n\n--------ASTAR---------\n\n");
+    printf("\n Path Length: %d\n", (int)answer3.path.size());
     for(int i: answer3.path) {
         printf("%d-->", i);
     }

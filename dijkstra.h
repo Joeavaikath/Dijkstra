@@ -76,12 +76,6 @@ class Dijkstra {
         for (int count = 0; count < V - 1; count++){
 
 
-            // Pick the minimum distance
-            // vertex from the set of
-            // vertices not yet processed. 
-            // u is always equal to src
-            // in first iteration.
-
             // while(closed[openQuery.top().id]) 
             //     openQuery.pop();
             
@@ -147,15 +141,15 @@ class Dijkstra {
 
         res.maxCloseSize = closedList.size();
 
-        printf("\n Open set contents: ");
-        for(int i:openList) {
-            printf("%d, ", i);
-        }
+        // printf("\n Open set contents: ");
+        // for(int i:openList) {
+        //     printf("%d, ", i);
+        // }
 
-        printf("\n Closed set contents: ");
-        for(int i:closedList) {
-            printf("%d, ", i);
-        }
+        // printf("\n Closed set contents: ");
+        // for(int i:closedList) {
+        //     printf("%d, ", i);
+        // }
 
         
         
