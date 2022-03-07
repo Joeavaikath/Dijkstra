@@ -18,10 +18,16 @@
 class aStar {
 
 
-    
+    int type;
+    int epsilon;
+
+    public:
+    aStar(int type, int epsilon) {
+        this->type = type;
+        this->epsilon = epsilon;
+    }
 
     
-    public:
     // Returns the shortest path list
     result pathFind_AStar(Graph graph, int startNode, int endNode) {
 
@@ -29,11 +35,11 @@ class aStar {
        
         // https://stackoverflow.com/questions/19535644/how-to-use-the-priority-queue-stl-for-objects
         // How to use priority queue for objects
-        struct LessThanByCost
+        struct LessThanByEstimatedCost
         {
             bool operator()(const vertexDistance& lhs, const vertexDistance& rhs) const
             {
-                return lhs.distance < rhs.distance;
+                return lhs.estimatedTotalCost < rhs.estimatedTotalCost;
             }
         };   
         
@@ -45,7 +51,7 @@ class aStar {
         std::set<int> openList;
 
         // (Priority queue type, vector for storage, comparison operation)
-        std::priority_queue<vertexDistance, std::vector<vertexDistance>, LessThanByCost> openQuery;
+        std::priority_queue<vertexDistance, std::vector<vertexDistance>, LessThanByEstimatedCost> openQuery;
 
     
         int V = matrix.size();
@@ -55,6 +61,7 @@ class aStar {
 
         // Distances from startNode
         int dist[V];
+        int estimatedDist[V];
 
         // Closed or not
         bool closed[V];
@@ -66,11 +73,13 @@ class aStar {
             parent[startNode] = -1;
             dist[i] = 999999;
             closed[i] = false;
+            estimatedDist[i] = 999999;
         }
    
         // Distance of source vertex 
         // from itself is always 0
         dist[startNode] = 0;
+        estimatedDist[startNode] = heuristic(startNode, endNode, coordinates, type);
     
         // Find shortest path
         // for all vertices
@@ -87,7 +96,7 @@ class aStar {
             //     openQuery.pop();
             
             // int u = openQuery.top().id;
-            int u = minDistance(dist, closed, V);
+            int u = minDistance(estimatedDist, closed, V);
 
 
             // Destination node selected, we are done
@@ -118,7 +127,7 @@ class aStar {
                 // printf("\n %d %d %d", dist[u],  matrix[u][v], dist[v]);
 
             
-                if (matrix[u][v]!=0  && dist[u] + matrix[u][v] + heuristic(u, endNode, coordinates) < dist[v])
+                if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
                 {   
                     
                     parent[v] = u;
@@ -128,7 +137,8 @@ class aStar {
                     res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
 
                     
-                    dist[v] = dist[u] + matrix[u][v] + heuristic(u, endNode, coordinates);
+                    dist[v] = dist[u] + matrix[u][v];
+                    estimatedDist[v] = dist[v] + heuristic(v, endNode, coordinates,type);
                     // Update element with vertex value v to new distance value v
                     //openQuery.push(vertexDistance(v, dist[v]));
                 } 
@@ -145,6 +155,21 @@ class aStar {
         }
 
         res.maxCloseSize = closedList.size();
+
+
+        printf("\n Open set contents: ");
+        for(int i:openList) {
+            printf("%d, ", i);
+        }
+
+        printf("\n Closed set contents: ");
+        for(int i:closedList) {
+            printf("%d, ", i);
+        }
+
+        
+
+        
 
         return res;
    
@@ -169,7 +194,7 @@ class aStar {
 
     }
 
-    int heuristic(int source, int destination, std::vector<std::pair<int,int>> coordinates) {
+    int heuristic(int source, int destination, std::vector<std::pair<int,int>> coordinates, int type) {
 
         // Calculates and returns the heuristic estimation between the source and destination
 
@@ -177,11 +202,14 @@ class aStar {
         int x = coordinates[source].first - coordinates[destination].first;
         int y = coordinates[source].second - coordinates[destination].second;
 
+        if(type == 0)
         // Manhattan distance
-        // return abs(x) + abs(y);
-
+            return  epsilon * (abs(x) + abs(y));
+        else if(type == 1)
         // Euclidean distance
-        return sqrt(pow(x,2) + pow(y,2));
+            return epsilon * (sqrt(pow(x,2) + pow(y,2)));
+        else 
+            return -1;
     }
 
 

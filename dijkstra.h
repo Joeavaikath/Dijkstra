@@ -146,6 +146,18 @@ class Dijkstra {
         }
 
         res.maxCloseSize = closedList.size();
+
+        printf("\n Open set contents: ");
+        for(int i:openList) {
+            printf("%d, ", i);
+        }
+
+        printf("\n Closed set contents: ");
+        for(int i:closedList) {
+            printf("%d, ", i);
+        }
+
+        
         
 
         return res;

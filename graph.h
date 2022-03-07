@@ -18,10 +18,12 @@ struct result {
 struct vertexDistance {
     int id;
     int distance;
+    int estimatedTotalCost;
 
     vertexDistance(int startNode, int distance) {
         this->id = startNode;
         this->distance = distance;
+        this->estimatedTotalCost = 0;
     }
 };
 
