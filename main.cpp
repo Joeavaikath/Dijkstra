@@ -1,6 +1,11 @@
 #include <cstdio>
+#include <iostream>
 #include "dijkstra.h"
 #include "aStar.h"
+#include <chrono>
+#include <algorithm>
+
+
 
 
 void setCoordinates(std::vector<std::pair<int,int>> &coordinates, int matSize);
@@ -21,7 +26,7 @@ int main() {
     int matSize = 2025;   
     // Source and destination
     int source = 0;     
-    int destination = 899;
+    int destination = 2024;
     int obstacleChance = 40;
 
     std::vector<std::pair<int,int>> coordinates;
@@ -41,19 +46,51 @@ int main() {
 
     initializeConnections(coordinates, matSize, matrix, obstacles);
     
-
+    auto start = std::chrono::high_resolution_clock::now();
     Graph g(matrix, coordinates);
+    auto stop = std::chrono::high_resolution_clock::now();
+
+
+    // printf("\n %ld", g.getAdjList()[0].size());
+    // printf("\n %ld", g.getAdjList()[0].size());
+
+    // for(int i=0;i<g.getAdjList().size();i++) {
+
+        
+
+    //     for(int j=0;j<g.getAdjList()[i].size();j++) {
+    //         printf("\n %d %d %d", i, g.getAdjList()[i][j].id, g.getAdjList()[i][j].distance);
+    //     }
+    // }
+
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    printf("\n Done with graph stuff, time taken %ld", duration.count());
 
 
     Dijkstra dij;
-    aStar star(1, 5);
-    aStar star2(0, 5);
     
 
+    aStar star(1, 5);
     
+    aStar star2(0, 5);
+    
+    
+
+    start = std::chrono::high_resolution_clock::now();
     result answer = dij.pathFindDijkstra(g, source, destination);
+    stop = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    printf("\n Done with dijk %ld", duration.count());
+    start = std::chrono::high_resolution_clock::now();
     result answer2 = star.pathFind_AStar(g, source ,destination);
+    stop = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    printf("\n Done with astar1 %ld", duration.count());
+    start = std::chrono::high_resolution_clock::now();
     result answer3 = star2.pathFind_AStar(g, source ,destination);
+    stop = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    printf("\n Done with astar2 %ld", duration.count());
 
     printf("\n\n---------DIJKS---------\n\n");
     printf("\n Path Length: %d\n", (int)answer.path.size());

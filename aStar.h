@@ -39,7 +39,7 @@ class aStar {
         {
             bool operator()(const vertexDistance& lhs, const vertexDistance& rhs) const
             {
-                return lhs.estimatedTotalCost < rhs.estimatedTotalCost;
+                return lhs.estimatedTotalCost > rhs.estimatedTotalCost;
             }
         };   
         
@@ -84,19 +84,16 @@ class aStar {
         // Find shortest path
         // for all vertices
 
-        openQuery.push(vertexDistance(startNode, 0));
-        for (int count = 0; count < V - 1; count++){
+        openQuery.push(vertexDistance(startNode,dist[startNode], estimatedDist[startNode]));
+        while(openQuery.size() > 0)
+        // for (int count = 0; count < V - 1; count++)
+        {
 
-            // Pick the minimum distance
-            // vertex from the set of
-            // vertices not yet processed. 
-            // u is always equal to src
-            // in first iteration.
-            // while(closed[openQuery.top().id]) 
-            //     openQuery.pop();
+
             
-            // int u = openQuery.top().id;
-            int u = minDistance(estimatedDist, closed, V);
+            int u = openQuery.top().id;
+            openQuery.pop();
+            // int u = minDistance(estimatedDist, closed, V);
 
 
             // Destination node selected, we are done
@@ -104,44 +101,36 @@ class aStar {
                 break;
             
     
-            // Mark the picked vertex 
-            // as processed
+            
             closed[u] = true;
             closedList.insert(u);
             openList.erase(u);
     
-            // Update dist value of the 
-            // adjacent vertices of the
-            // picked vertex.
-            for (int v = 0; v < V; v++){
-    
-                // Update dist[v] only if is
-                // not in sptSet, there is
-                // an edge from u to v, and 
-                // total weight of path from
-                // src to v through u is smaller
-                // than current value of
-                // dist[v]
+            if(graph.getAdjList().size() >0 ){
+                for (int i=0;i<graph.getAdjList()[u].size();i++){
 
-                // printf("\n %d %d", closed[v], matrix[u][v]);
-                // printf("\n %d %d %d", dist[u],  matrix[u][v], dist[v]);
+                     
 
-            
-                if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
-                {   
+                    int v = graph.getAdjList()[u][i].id;
+        
                     
-                    parent[v] = u;
-                    if(openList.find(v) == openList.end())
-                        openList.insert(v);
+                
+                    if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
+                    {   
+                        
+                        parent[v] = u;
+                        if(openList.find(v) == openList.end())
+                            openList.insert(v);
 
-                    res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
+                        res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
 
-                    
-                    dist[v] = dist[u] + matrix[u][v];
-                    estimatedDist[v] = dist[v] + heuristic(v, endNode, coordinates,type);
-                    // Update element with vertex value v to new distance value v
-                    //openQuery.push(vertexDistance(v, dist[v]));
-                } 
+                        
+                        dist[v] = dist[u] + matrix[u][v];
+                        estimatedDist[v] = dist[v] + heuristic(v, endNode, coordinates,type);
+                        // Update element with vertex value v to new distance value v
+                        openQuery.push(vertexDistance(v, dist[v], estimatedDist[v]));
+                    } 
+                }
             }
         }
 

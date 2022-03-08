@@ -30,7 +30,7 @@ class Dijkstra {
         {
             bool operator()(const vertexDistance& lhs, const vertexDistance& rhs) const
             {
-                return lhs.distance < rhs.distance;
+                return lhs.distance > rhs.distance;
             }
         };   
         
@@ -72,19 +72,26 @@ class Dijkstra {
         // for all vertices
 
         openQuery.push(vertexDistance(startNode, 0));
-        //while(openQuery.size() > 0)
-        for (int count = 0; count < V - 1; count++){
+        while(openQuery.size() > 0)
+        // for (int count = 0; count < V - 1; count++)
+        {
 
-
-            // while(closed[openQuery.top().id]) 
-            //     openQuery.pop();
+           
             
-            // int u = openQuery.top().id;
-            int u = minDistance(dist, closed, V);
+            int u = openQuery.top().id;
+            // while(closed[u]) {
+            //     openQuery.pop();
+            //     u = openQuery.top().id;
+            // }
+            openQuery.pop();
+            // int u = minDistance(dist, closed, V);
 
             // Destination node selected, we are done
             if(u == endNode) 
                 break;
+
+            
+
             
     
             // Mark the picked vertex 
@@ -92,48 +99,49 @@ class Dijkstra {
             closed[u] = true;
             closedList.insert(u);
             openList.erase(u);
+            
+
 
     
             // Update dist value of the 
             // adjacent vertices of the
             // picked vertex.
-            for (int v = 0; v < V; v++){
 
-                
-    
-                // Update dist[v] only if is
-                // not in sptSet, there is
-                // an edge from u to v, and 
-                // total weight of path from
-                // src to v through u is smaller
-                // than current value of
-                // dist[v]
+            if( graph.getAdjList()[u].size() > 0 )  {
 
-                // printf("\n %d %d", closed[v], matrix[u][v]);
-                // printf("\n %d %d %d", dist[u],  matrix[u][v], dist[v]);
-            
-                if (!closed[v] && matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
-                {   
+               
 
-                    
-                    parent[v] = u;
-                    if(openList.find(v) == openList.end())
-                        openList.insert(v);
-                    
-                    res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
 
-                    
-                    dist[v] = dist[u] + matrix[u][v];
-                    // Update element with vertex value v to new distance value v
-                    //openQuery.push(vertexDistance(v, dist[v]));
-                } 
+                for (int i=0;i<graph.getAdjList()[u].size();i++){
+
+                     
+
+                    int v = graph.getAdjList()[u][i].id;
+
+                    if (!closed[v] && matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
+                    // if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
+                    {   
+
+                        parent[v] = u;
+                        if(openList.find(v) == openList.end())
+                            openList.insert(v);
+                        
+                        res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
+
+                        
+                        dist[v] = dist[u] + matrix[u][v];
+                        // Update element with vertex value v to new distance value v
+                        openQuery.push(vertexDistance(v, dist[v]));
+                    } 
+                }
             }
+
+            
         }
         
         
 
         while(endNode != -1) {
-            // printf("\n %d %d", endNode, parent[endNode]);
 
             res.path.push_front(endNode);
             endNode = parent[endNode];
@@ -141,15 +149,7 @@ class Dijkstra {
 
         res.maxCloseSize = closedList.size();
 
-        // printf("\n Open set contents: ");
-        // for(int i:openList) {
-        //     printf("%d, ", i);
-        // }
-
-        // printf("\n Closed set contents: ");
-        // for(int i:closedList) {
-        //     printf("%d, ", i);
-        // }
+    
 
         
         
