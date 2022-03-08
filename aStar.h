@@ -44,6 +44,7 @@ class aStar {
         };   
         
         std::vector<std::vector<int>> matrix = graph.getAdjMat();
+        std::vector<std::vector<adjListNode>> adjList = graph.getAdjList();
         std::vector<std::pair<int,int>>  coordinates = graph.getCoordinates();
         result res;
 
@@ -85,6 +86,8 @@ class aStar {
         // for all vertices
 
         openQuery.push(vertexDistance(startNode,dist[startNode], estimatedDist[startNode]));
+
+        int debug = 0;
         while(openQuery.size() > 0)
         // for (int count = 0; count < V - 1; count++)
         {
@@ -105,38 +108,39 @@ class aStar {
             closed[u] = true;
             closedList.insert(u);
             openList.erase(u);
+
+             
+            // for (int v = 0; v < V; v++){
+            for (int i=0;i<adjList[u].size();i++){
+
+            debug++;
+
+            int v = adjList[u][i].id;
     
-            if(graph.getAdjList().size() >0 ){
-                for (int i=0;i<graph.getAdjList()[u].size();i++){
-
-                     
-
-                    int v = graph.getAdjList()[u][i].id;
-        
-                    
                 
-                    if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
-                    {   
-                        
-                        parent[v] = u;
-                        if(openList.find(v) == openList.end())
-                            openList.insert(v);
+            
+                if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
+                {   
+                    
+                    parent[v] = u;
+                    if(openList.find(v) == openList.end())
+                        openList.insert(v);
 
-                        res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
+                    res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
 
-                        
-                        dist[v] = dist[u] + matrix[u][v];
-                        estimatedDist[v] = dist[v] + heuristic(v, endNode, coordinates,type);
-                        // Update element with vertex value v to new distance value v
-                        openQuery.push(vertexDistance(v, dist[v], estimatedDist[v]));
-                    } 
-                }
+                    
+                    dist[v] = dist[u] + matrix[u][v];
+                    estimatedDist[v] = dist[v] + heuristic(v, endNode, coordinates,type);
+                    // Update element with vertex value v to new distance value v
+                    openQuery.push(vertexDistance(v, dist[v], estimatedDist[v]));
+                } 
             }
+            
         }
 
         
         
-
+        printf("\n debug: %d", debug);
         while(endNode != -1) {
             // printf("\n %d %d", endNode, parent[endNode]);
             res.path.push_front(endNode);

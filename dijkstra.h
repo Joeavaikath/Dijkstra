@@ -35,6 +35,8 @@ class Dijkstra {
         };   
         
         std::vector<std::vector<int>> matrix = graph.getAdjMat();
+        std::vector<std::vector<adjListNode>> adjList = graph.getAdjList();
+
         result res;
 
         std::set<int> closedList;
@@ -72,6 +74,7 @@ class Dijkstra {
         // for all vertices
 
         openQuery.push(vertexDistance(startNode, 0));
+        int debug = 0;
         while(openQuery.size() > 0)
         // for (int count = 0; count < V - 1; count++)
         {
@@ -107,39 +110,39 @@ class Dijkstra {
             // adjacent vertices of the
             // picked vertex.
 
-            if( graph.getAdjList()[u].size() > 0 )  {
 
                
 
+            // for (int v = 0; v < V; v++){
+            for (int i=0;i<adjList[u].size();i++){
 
-                for (int i=0;i<graph.getAdjList()[u].size();i++){
+                debug++;
 
-                     
+                int v = adjList[u][i].id;
 
-                    int v = graph.getAdjList()[u][i].id;
+                if (!closed[v] && matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
+                // if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
+                {   
 
-                    if (!closed[v] && matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
-                    // if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
-                    {   
+                    parent[v] = u;
+                    if(openList.find(v) == openList.end())
+                        openList.insert(v);
+                    
+                    res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
 
-                        parent[v] = u;
-                        if(openList.find(v) == openList.end())
-                            openList.insert(v);
-                        
-                        res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
-
-                        
-                        dist[v] = dist[u] + matrix[u][v];
-                        // Update element with vertex value v to new distance value v
-                        openQuery.push(vertexDistance(v, dist[v]));
-                    } 
-                }
+                    
+                    dist[v] = dist[u] + matrix[u][v];
+                    // Update element with vertex value v to new distance value v
+                    openQuery.push(vertexDistance(v, dist[v]));
+                } 
             }
+            
 
             
         }
         
-        
+        printf("\n debug: %d", debug);
+
 
         while(endNode != -1) {
 

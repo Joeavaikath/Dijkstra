@@ -39,6 +39,7 @@ int main() {
     // obstacles = {51, 52, 53,54,55,45, 35, 25, 15};
     // visualizeGraph(matSize, obstacles);
 
+
     // printf("\n Obstacles are: ");
     // for(int i:obstacles)
     //     printf("%d ", i);
@@ -81,11 +82,13 @@ int main() {
     stop = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     printf("\n Done with dijk %ld", duration.count());
+
     start = std::chrono::high_resolution_clock::now();
     result answer2 = star.pathFind_AStar(g, source ,destination);
     stop = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     printf("\n Done with astar1 %ld", duration.count());
+
     start = std::chrono::high_resolution_clock::now();
     result answer3 = star2.pathFind_AStar(g, source ,destination);
     stop = std::chrono::high_resolution_clock::now();
