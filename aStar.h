@@ -88,10 +88,11 @@ class aStar {
         openQuery.push(vertexDistance(startNode,dist[startNode], estimatedDist[startNode]));
 
         int debug = 0;
+        int openListruns = 0;
         while(openQuery.size() > 0)
         // for (int count = 0; count < V - 1; count++)
         {
-
+            openListruns++;
 
             
             int u = openQuery.top().id;
@@ -140,7 +141,7 @@ class aStar {
 
         
         
-        printf("\n debug: %d", debug);
+        printf("\n debug: %d openListRuns: %d", debug, openListruns);
         while(endNode != -1) {
             // printf("\n %d %d", endNode, parent[endNode]);
             res.path.push_front(endNode);
@@ -194,6 +195,8 @@ class aStar {
 
         int x = coordinates[source].first - coordinates[destination].first;
         int y = coordinates[source].second - coordinates[destination].second;
+        
+
 
         if(type == 0)
         // Manhattan distance

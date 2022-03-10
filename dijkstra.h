@@ -75,9 +75,11 @@ class Dijkstra {
 
         openQuery.push(vertexDistance(startNode, 0));
         int debug = 0;
+        int openListRuns = 0;
         while(openQuery.size() > 0)
         // for (int count = 0; count < V - 1; count++)
-        {
+        {      
+            openListRuns++;
 
            
             
@@ -141,7 +143,7 @@ class Dijkstra {
             
         }
         
-        printf("\n debug: %d", debug);
+        printf("\n debug: %d openListRuns: %d", debug, openListRuns);
 
 
         while(endNode != -1) {
