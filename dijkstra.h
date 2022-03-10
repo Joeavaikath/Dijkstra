@@ -34,7 +34,7 @@ class Dijkstra {
             }
         };   
         
-        std::vector<std::vector<int>> matrix = graph.getAdjMat();
+        // std::vector<std::vector<int>> matrix = graph.getAdjMat();
         std::vector<std::vector<adjListNode>> adjList = graph.getAdjList();
 
         result res;
@@ -46,7 +46,7 @@ class Dijkstra {
         std::priority_queue<vertexDistance, std::vector<vertexDistance>, LessThanByCost> openQuery;
 
     
-        int V = matrix.size();
+        int V = adjList.size();
     
         // printf("\n %d", V);
         // printf("\n %d", V);
@@ -122,7 +122,7 @@ class Dijkstra {
 
                 int v = adjList[u][i].id;
 
-                if (!closed[v] && matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
+                if (!closed[v] && adjList[u][i].distance!=0  && dist[u] + adjList[u][i].distance < dist[v])
                 // if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
                 {   
 
@@ -133,7 +133,7 @@ class Dijkstra {
                     res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
 
                     
-                    dist[v] = dist[u] + matrix[u][v];
+                    dist[v] = dist[u] + adjList[u][i].distance;
                     // Update element with vertex value v to new distance value v
                     openQuery.push(vertexDistance(v, dist[v]));
                 } 

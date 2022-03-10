@@ -43,7 +43,7 @@ class aStar {
             }
         };   
         
-        std::vector<std::vector<int>> matrix = graph.getAdjMat();
+        // std::vector<std::vector<int>> matrix = graph.getAdjMat();
         std::vector<std::vector<adjListNode>> adjList = graph.getAdjList();
         std::vector<std::pair<int,int>>  coordinates = graph.getCoordinates();
         result res;
@@ -55,7 +55,7 @@ class aStar {
         std::priority_queue<vertexDistance, std::vector<vertexDistance>, LessThanByEstimatedCost> openQuery;
 
     
-        int V = matrix.size();
+        int V = adjList.size();
     
         // printf("\n %d", V);
         // printf("\n %d", V);
@@ -120,7 +120,7 @@ class aStar {
     
                 
             
-                if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
+                if (adjList[u][i].distance!=0  && dist[u] + adjList[u][i].distance < dist[v])
                 {   
                     
                     parent[v] = u;
@@ -130,7 +130,7 @@ class aStar {
                     res.maxOpenSize = std::max((int)openList.size(), res.maxOpenSize);
 
                     
-                    dist[v] = dist[u] + matrix[u][v];
+                    dist[v] = dist[u] + adjList[u][i].distance;
                     estimatedDist[v] = dist[v] + heuristic(v, endNode, coordinates,type);
                     // Update element with vertex value v to new distance value v
                     openQuery.push(vertexDistance(v, dist[v], estimatedDist[v]));

@@ -2,6 +2,7 @@
 #define GRAPH_H
 #include <vector>
 #include <list>
+#include <fstream>
 
 // Citation: AI For Games, Third Edition 2019. Section 4.1.5: Representation
 // What and why: Pseudocode helped implement good code.
@@ -80,6 +81,9 @@ class Graph {
 
     std::vector<std::vector<adjListNode>> convert(std::vector<std::vector<int>> a)
     {
+        
+        std::ofstream myfile("adjList.txt");
+
         std::vector<std::vector<adjListNode>> adjList(a.size());
         for (int i = 0; i < a.size(); i++)
         {
@@ -89,9 +93,17 @@ class Graph {
                 if (a[i][j] > 0)
                 {
                     adjList[i].push_back(adjListNode(j, a[i][j]));
+                    myfile << i;
+                    myfile << " ";
+                    myfile << j;
+                    myfile << " ";
+                    myfile << a[i][j];
+                    myfile <<"\n";
                 }
             }
         }
+
+        myfile.close();
         
         return adjList;
     }
