@@ -56,6 +56,13 @@ class Graph {
     
 
     public:
+
+    Graph(std::vector<std::vector<adjListNode>> adjList, std::vector<std::pair<int,int>>  coordinates) {
+
+        this->adjList = adjList;
+        this->coordinates = coordinates;
+    }
+
     Graph(std::vector<std::vector<int>> adjMat, std::vector<std::pair<int,int>> coordinates) {
 
         this->adjMat = adjMat;
