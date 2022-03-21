@@ -14,7 +14,8 @@ void setCoordinates(std::vector<std::pair<int,int>> &coordinates, int matSize);
 void initializeConnections(std::vector<std::pair<int,int>> &coordinates, int matSize, std::vector<std::vector<int>> &matrix, std::unordered_set<int> obstacles);
 void visualizeGraph(int matSize, std::unordered_set<int> &obstacles, int obstacleChance, int source, int destination);
 void visualizeGraph(int matSize, std::unordered_set<int> &obstacles);
-void readIntoList(std::vector<std::vector<adjListNode>> &readList);
+void readIntoList(std::vector<std::vector<adjListNode>> &readList, int adjList[][51]);
+void readCoordinates(std::vector<std::pair<int,int>> &coordinates);
 
 int main() {
     
@@ -37,31 +38,33 @@ int main() {
     // PARAMETERS HERE:
 
     // Size, preferably in perfect squares.
-    int matSize = 10000;   
+    int matSize = 51;   
     // Source and destination
-    int source = 0;     
-    int destination = 9999;
-    int obstacleChance = 25;
+    int source = 1;     
+    int destination = 50;
+    // int obstacleChance = 25;
 
-    source = rand() % matSize;
-    destination = rand() % matSize;
+    // source = rand() % matSize;
+    // destination = rand() % matSize;
 
-    while(std::find(begin(obstacles), end(obstacles), source) != end(obstacles))
-        source = rand() % matSize;
+    // while(std::find(begin(obstacles), end(obstacles), source) != end(obstacles))
+    //     source = rand() % matSize;
 
-    while(std::find(begin(obstacles), end(obstacles), destination) != end(obstacles))
-        destination = rand() % matSize;
+    // while(std::find(begin(obstacles), end(obstacles), destination) != end(obstacles))
+    //     destination = rand() % matSize;
 
     
 
     std::vector<std::pair<int,int>> coordinates;
 
-    start = std::chrono::high_resolution_clock::now();
-    //Code goes here
-    setCoordinates(coordinates, matSize);
-    stop = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    printf("\n Done with setCoordinates %ld", duration.count());
+    readCoordinates(coordinates);
+
+    // start = std::chrono::high_resolution_clock::now();
+    // //Code goes here
+    // setCoordinates(coordinates, matSize);
+    // stop = std::chrono::high_resolution_clock::now();
+    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // printf("\n Done with setCoordinates %ld", duration.count());
 
     
 
@@ -201,7 +204,11 @@ int main() {
 
     std::vector<std::vector<adjListNode>> readList(matSize);
 
-    readIntoList(readList);
+    int adjList[51][51];
+
+    readIntoList(readList, adjList);
+
+    printf("\n\n file reads done");
 
 
     
@@ -227,6 +234,7 @@ int main() {
     
     aStar star2(1, 1);
     
+    printf("\n\n graph algos done");
     
 
     start = std::chrono::high_resolution_clock::now();
@@ -247,9 +255,22 @@ int main() {
     printf("\n\n---------DIJKS---------\n\n");
     printf("\n Done with Dijkstra : %ld", durationDijk.count());
     printf("\n Path Length: %d\n", (int)answer.path.size());
+    int sum = 0;
+    std::vector<int> path;
     for(int i: answer.path) {
         printf("%d-->", i);
+        path.push_back(i);
     }
+
+    for(int i=1;i<path.size();i++){
+        
+        printf("\nCost from %d to %d is %d", path[i-1], path[i], adjList[path[i-1]][path[i]]);
+        sum += adjList[path[i-1]][path[i]]; 
+    }
+    printf("\n Cost: %d", sum);
+
+    path.clear();
+    sum = 0;
 
     printf("\n Max open list size: %d\n Max closed list size: %d", answer.maxOpenSize, answer.maxCloseSize);
 
@@ -261,6 +282,21 @@ int main() {
         printf("%d-->", i);
     }
 
+    for(int i: answer2.path) {
+        printf("%d-->", i);
+        path.push_back(i);
+    }
+
+    for(int i=1;i<path.size();i++){
+        
+        printf("\nCost from %d to %d is %d", path[i-1], path[i], adjList[path[i-1]][path[i]]);
+        sum += adjList[path[i-1]][path[i]]; 
+    }
+    printf("\n Cost: %d", sum);
+
+    path.clear();
+    sum = 0;
+
     printf("\n Max open list size: %d\n Max closed list size: %d", answer2.maxOpenSize, answer2.maxCloseSize);
 
     printf("\n\n--------ASTAR---------\n\n");
@@ -269,6 +305,21 @@ int main() {
     for(int i: answer3.path) {
         printf("%d-->", i);
     }
+
+    for(int i: answer3.path) {
+        printf("%d-->", i);
+        path.push_back(i);
+    }
+
+    for(int i=1;i<path.size();i++){
+        
+        printf("\nCost from %d to %d is %d", path[i-1], path[i], adjList[path[i-1]][path[i]]);
+        sum += adjList[path[i-1]][path[i]]; 
+    }
+    printf("\n Cost: %d", sum);
+
+    path.clear();
+    sum = 0;
 
     printf("\n Max open list size: %d\n Max closed list size: %d", answer3.maxOpenSize, answer3.maxCloseSize);
 
@@ -403,13 +454,13 @@ void initializeConnections(std::vector<std::pair<int,int>> &coordinates, int mat
 }
 
 // Read contents of file into adjacency list object
-void readIntoList(std::vector<std::vector<adjListNode>> &readList) {
+void readIntoList(std::vector<std::vector<adjListNode>> &readList, int adjList[][51]) {
 
     std::ifstream file;
 
 
 
-    file.open("adjList.txt");
+    file.open("adjListSmall.txt");
 
     
 
@@ -434,10 +485,10 @@ void readIntoList(std::vector<std::vector<adjListNode>> &readList) {
         file >> weight;
 
         
-        
+        printf("\n\n segfault here %d %d %d", source, destination, weight);
 
         readList[source].push_back(adjListNode(destination, weight));
-
+        adjList[source][destination] = weight;
     }
 
     file.close();
@@ -445,5 +496,44 @@ void readIntoList(std::vector<std::vector<adjListNode>> &readList) {
 
 
 
+
+}
+
+void readCoordinates(std::vector<std::pair<int,int>> &coordinates) {
+
+    std::ifstream file;
+
+    std::vector<std::pair<int,int>> co(51);
+
+    coordinates = co;
+
+    file.open("adjListSmallCoordinates.txt");
+
+    
+    if(!file) {
+        //cout << "Error unable to open file";
+    }
+
+    int vertex;
+    int x;
+    int y;
+
+    vertex = x = y = 0;
+
+    while(!file.eof()) {
+
+        
+
+        file >> vertex;
+        file >> x;
+        file >> y;
+
+        // printf("\n segfaulting here %d %d %d\n\n", vertex, x ,y);
+
+        coordinates[vertex] = std::make_pair(x,y);
+
+    }
+
+    file.close();
 
 }
