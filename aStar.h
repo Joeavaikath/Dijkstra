@@ -31,8 +31,7 @@ class aStar {
     // Returns the shortest path list
     result pathFind_AStar(Graph graph, int startNode, int endNode) {
 
-        
-       
+    
         // https://stackoverflow.com/questions/19535644/how-to-use-the-priority-queue-stl-for-objects
         // How to use priority queue for objects
         struct LessThanByEstimatedCost
@@ -57,9 +56,6 @@ class aStar {
     
         int V = adjList.size();
     
-        // printf("\n %d", V);
-        // printf("\n %d", V);
-
         // Distances from startNode
         int dist[V];
         int estimatedDist[V];
@@ -80,7 +76,25 @@ class aStar {
         // Distance of source vertex 
         // from itself is always 0
         dist[startNode] = 0;
-        estimatedDist[startNode] = heuristic(startNode, endNode, coordinates, type);
+
+        // X and Y coordinate differences
+        int x = coordinates[startNode].first - coordinates[endNode].first;
+        int y = coordinates[startNode].second - coordinates[endNode].second;
+        
+        int subRes; 
+
+        // 0 for Manhattan, 1 for Euclidean
+        if(type == 0)
+        // Manhattan distance
+            subRes =   epsilon * (abs(x) + abs(y));
+        else if(type == 1)
+        // Euclidean distance
+            subRes =  epsilon * (sqrt(pow(x,2) + pow(y,2)));
+        else 
+                subRes =  -1;
+        
+        // Initial estimate from source to destination
+        estimatedDist[startNode] = subRes;
     
         // Find shortest path
         // for all vertices
@@ -111,7 +125,6 @@ class aStar {
             openList.erase(u);
 
              
-            // for (int v = 0; v < V; v++){
             for (int i=0;i<adjList[u].size();i++){
 
             debug++;
@@ -119,8 +132,8 @@ class aStar {
             int v = adjList[u][i].id;
     
                 
-            
-                if (adjList[u][i].distance!=0  && dist[u] + adjList[u][i].distance < dist[v])
+
+                if (dist[u] + adjList[u][i].distance < dist[v])
                 {   
                     
                     parent[v] = u;
@@ -131,83 +144,65 @@ class aStar {
 
                     
                     dist[v] = dist[u] + adjList[u][i].distance;
-                    estimatedDist[v] = dist[v] + heuristic(v, endNode, coordinates,type);
+
+
+                    /*  Calculate heruristic value - made inline because 
+                     *  performance was taking a hit.
+                    */
+
+                    // X and Y coordinate differences
+                    int x = coordinates[v].first - coordinates[endNode].first;
+                    int y = coordinates[v].second - coordinates[endNode].second;
+                    
+                    int subRes; 
+
+                    // 0 for Manhattan, 1 for Euclidean
+                    if(type == 0)
+                    // Manhattan distance
+                        subRes =   epsilon * (abs(x) + abs(y));
+                    else if(type == 1)
+                    // Euclidean distance
+                        subRes =  epsilon * (sqrt(pow(x,2) + pow(y,2)));
+                    else 
+                         subRes =  -1;
+
+
+
+                
+                    estimatedDist[v] = dist[v] + subRes;
                     // Update element with vertex value v to new distance value v
+                    /*  The std library implementation for priority queue does not
+                        allow removal of elements; the workaround is pushing in the 
+                        same valued vertex with updated values. This is guarenteed to
+                        work as new values will be lower than old values, so the heap
+                        will always fetch the newest value.
+                    */
                     openQuery.push(vertexDistance(v, dist[v], estimatedDist[v]));
                 } 
+
+                
             }
             
         }
 
         
-        
-        printf("\n debug: %d openListRuns: %d", debug, openListruns);
+        // ---Debug info for how many runs--- 
+        // printf("\n debug: %d openListRuns: %d ", debug, openListruns);
+
+
+        // Save the path to the result object
         while(endNode != -1) {
             // printf("\n %d %d", endNode, parent[endNode]);
             res.path.push_front(endNode);
             endNode = parent[endNode];
         }
 
+        // Save closed list size to result object
         res.maxCloseSize = closedList.size();
-
-
-        // printf("\n Open set contents: ");
-        // for(int i:openList) {
-        //     printf("%d, ", i);
-        // }
-
-        // printf("\n Closed set contents: ");
-        // for(int i:closedList) {
-        //     printf("%d, ", i);
-        // }
-
-        
-
-        
 
         return res;
    
     }
-
-    int minDistance(int dist[], bool closed[], int size) {
-
-        int min = INT_MAX;
-        int minVertex = -1;
-
-        for(int i=0;i<size;i++) {
-
-            if(!closed[i]) {
-                if(dist[i] < min) {
-                    min = dist[i];
-                    minVertex = i;
-                }
-            }
-        }
-
-        return minVertex;
-
-    }
-
-    int heuristic(int source, int destination, std::vector<std::pair<int,int>> coordinates, int type) {
-
-        // Calculates and returns the heuristic estimation between the source and destination
-
-
-        int x = coordinates[source].first - coordinates[destination].first;
-        int y = coordinates[source].second - coordinates[destination].second;
-        
-
-
-        if(type == 0)
-        // Manhattan distance
-            return  epsilon * (abs(x) + abs(y));
-        else if(type == 1)
-        // Euclidean distance
-            return epsilon * (sqrt(pow(x,2) + pow(y,2)));
-        else 
-            return -1;
-    }
-
 
 };
 

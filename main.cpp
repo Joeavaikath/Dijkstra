@@ -11,9 +11,9 @@
 
 
 void setCoordinates(std::vector<std::pair<int,int>> &coordinates, int matSize);
-void initializeConnections(std::vector<std::pair<int,int>> &coordinates, int matSize, std::vector<std::vector<int>> &matrix, std::list<int> obstacles);
-void visualizeGraph(int matSize, std::list<int> &obstacles, int obstacleChance, int source, int destination);
-void visualizeGraph(int matSize, std::list<int> &obstacles);
+void initializeConnections(std::vector<std::pair<int,int>> &coordinates, int matSize, std::vector<std::vector<int>> &matrix, std::unordered_set<int> obstacles);
+void visualizeGraph(int matSize, std::unordered_set<int> &obstacles, int obstacleChance, int source, int destination);
+void visualizeGraph(int matSize, std::unordered_set<int> &obstacles);
 void readIntoList(std::vector<std::vector<adjListNode>> &readList);
 
 int main() {
@@ -21,32 +21,36 @@ int main() {
     srand(time(NULL));
 
     std::vector<std::vector<int>> matrix;
-    std::list<int> obstacles;
+    std::unordered_set<int> obstacles;
 
 
     auto start = std::chrono::high_resolution_clock::now();
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    auto durationDijk = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    auto durationAStar = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    auto durationAStarA = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
 
 
 
     // PARAMETERS HERE:
 
     // Size, preferably in perfect squares.
-    int matSize = 2500;   
+    int matSize = 10000;   
     // Source and destination
     int source = 0;     
-    int destination = 99;
-    int obstacleChance = 33;
+    int destination = 9999;
+    int obstacleChance = 25;
 
-    source = rand() % 2500;
-    destination = rand() % 2500;
+    source = rand() % matSize;
+    destination = rand() % matSize;
 
     while(std::find(begin(obstacles), end(obstacles), source) != end(obstacles))
-        source = rand() % 2500;
+        source = rand() % matSize;
 
     while(std::find(begin(obstacles), end(obstacles), destination) != end(obstacles))
-        destination = rand() % 2500;
+        destination = rand() % matSize;
 
     
 
@@ -69,13 +73,118 @@ int main() {
     // printf("\n Done with visualize graph %ld", duration.count());
 
     // // Custom obstacles
-    // // obstacles = {51, 52, 53,54,55,45, 35, 25, 15};
-    // // visualizeGraph(matSize, obstacles);
+
+    // // Border
+    // for(int i=0;i<=49;i++) {
+    //     obstacles.insert(i);
+    //     obstacles.insert(i+2450);
+
+    // }
+    
+    // for(int i=99;i<=2449;i+=50) {
+    //     obstacles.insert(i);
+    //     obstacles.insert(i-49);
+    // }
+
+    
+    // // Wall 1
+    // for(int i=9;i<2500;i+=50) {
+    //     if(i>1100 && i<1300)
+    //         continue;
+    //     obstacles.insert(i);
+    // }
 
 
-    // // printf("\n Obstacles are: ");
-    // // for(int i:obstacles)
-    // //     printf("%d ", i);
+    // // Wall 2
+    // for(int i=29;i<2500;i+=50) {
+    //     if(i>700 && i<900)
+    //         continue;
+    //     if(i>1500 && i<1700)
+    //         continue;
+        
+    //     obstacles.insert(i);
+    // }
+
+    // for(int i=1279;i<1300;i++)
+    //         obstacles.insert(i);
+
+    // for(int i=665;i<675;i++) {
+    //     for(int j=0;j<500;j+=50) {
+    //         obstacles.insert(i+j);
+    //     }
+
+    //     for(int j=700;j<1200;j+=50) {
+    //         obstacles.insert(i+j);
+            
+    //     }
+
+    //     for(int j=1400;j<1900;j+=50) {
+    //         obstacles.insert(i+j);
+            
+    //     }
+    // }
+
+    // for(int i=184;i<197;i++) {
+    //     obstacles.insert(i);
+    // }
+    // for(int i=234;i<1000;i+=50) {
+    //     obstacles.insert(i);
+    // }
+
+    // // Inter-walls for room 1
+    // for(int i=1451;i<=1458;i++){
+    //     if(i == 1455 || i == 1456)
+    //         continue;
+    //     obstacles.insert(i);
+    // }
+
+    // for(int i=2001;i<=2008;i++){
+    //     if(i == 2003 || i == 2004)
+    //         continue;
+    //     obstacles.insert(i);
+    // }
+
+    // for(int i=651;i<=658;i++){
+    //     if(i == 651 || i == 652)
+    //         continue;
+    //     obstacles.insert(i);
+    // }
+
+    // for(int i=251;i<=258;i++){
+    //     if(i == 257 || i == 258)
+    //         continue;
+    //     obstacles.insert(i);
+    // }
+
+    // //Inverse L on room 2
+    // for(int i=787;i<=792;i++)
+    //     obstacles.insert(i);
+    
+    // for(int i=342;i<=800;i+=50)
+    //     obstacles.insert(i);
+
+    // // Long walls, room 3
+    // for(int i=1333;i<=2333;i+=50)
+    //     obstacles.insert(i);
+    // for(int i=1436;i<=2436;i+=50)
+    //     obstacles.insert(i);
+    // for(int i=1439;i<=2339;i+=50)
+    //     obstacles.insert(i);
+
+
+
+
+    
+
+    
+    
+
+    // visualizeGraph(matSize, obstacles);
+
+
+    // printf("\n Obstacles are: ");
+    // for(int i:obstacles)
+    //     printf("%d ", i);
     
 
 
@@ -116,29 +225,27 @@ int main() {
 
     aStar star(1, 5);
     
-    aStar star2(0, 5);
+    aStar star2(1, 1);
     
     
 
     start = std::chrono::high_resolution_clock::now();
     result answer = dij.pathFindDijkstra(g, source, destination);
     stop = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    printf("\n Done with dijk %ld", duration.count());
+    durationDijk = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
     start = std::chrono::high_resolution_clock::now();
     result answer2 = star.pathFind_AStar(g, source ,destination);
     stop = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    printf("\n Done with astar1 %ld", duration.count());
+    durationAStar = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
     start = std::chrono::high_resolution_clock::now();
     result answer3 = star2.pathFind_AStar(g, source ,destination);
     stop = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    printf("\n Done with astar2 %ld", duration.count());
+    durationAStarA = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
     printf("\n\n---------DIJKS---------\n\n");
+    printf("\n Done with Dijkstra : %ld", durationDijk.count());
     printf("\n Path Length: %d\n", (int)answer.path.size());
     for(int i: answer.path) {
         printf("%d-->", i);
@@ -148,6 +255,7 @@ int main() {
 
 
     printf("\n\n--------ASTAR---------\n\n");
+    printf("\n Done with A-Star (Inadmissable) : %ld", durationAStar.count());
     printf("\n Path Length: %d\n", (int)answer2.path.size());
     for(int i: answer2.path) {
         printf("%d-->", i);
@@ -156,6 +264,7 @@ int main() {
     printf("\n Max open list size: %d\n Max closed list size: %d", answer2.maxOpenSize, answer2.maxCloseSize);
 
     printf("\n\n--------ASTAR---------\n\n");
+    printf("\n Done with A-Star (Admissable) : %ld", durationAStarA.count());
     printf("\n Path Length: %d\n", (int)answer3.path.size());
     for(int i: answer3.path) {
         printf("%d-->", i);
@@ -186,7 +295,7 @@ void setCoordinates(std::vector<std::pair<int,int>> &coordinates, int matSize) {
 
 }
 
-void visualizeGraph(int matSize, std::list<int> &obstacles, int obstacleChance, int source, int destination) {
+void visualizeGraph(int matSize, std::unordered_set<int> &obstacles, int obstacleChance, int source, int destination) {
 
     std::ofstream file("obstacles.txt");
 
@@ -200,7 +309,7 @@ void visualizeGraph(int matSize, std::list<int> &obstacles, int obstacleChance, 
             if(rand() % 100 < obstacleChance && currentVertex != source && currentVertex != destination) {
                 // printf("X\t");
                 
-                obstacles.push_back(currentVertex);
+                obstacles.insert(currentVertex);
                 file << currentVertex;
                 file << " ";
 
@@ -214,32 +323,47 @@ void visualizeGraph(int matSize, std::list<int> &obstacles, int obstacleChance, 
     file.close();
 }
 
-void visualizeGraph(int matSize, std::list<int> &obstacles) {
+void visualizeGraph(int matSize, std::unordered_set<int> &obstacles) {
+
+    std::ofstream file("obstacles.txt");
 
     // Visualize graph
     for(int i=0;i<sqrt(matSize);i++) {
-        printf("\n");
+        //printf("\n");
         for(int j=0;j<sqrt(matSize);j++) {
 
             int currentVertex = int(i*sqrt(matSize) + j);
 
             if( std::find(begin(obstacles), end(obstacles), currentVertex) != std::end(obstacles) ) {
-                printf("X\t");
+                //printf("X\t");
+
+                file << currentVertex;
+                file << " ";
                 
             }
-            else
-                printf("%d\t", currentVertex);
+            
 
         }
     }
+
+    file.close();
 }
 
-void initializeConnections(std::vector<std::pair<int,int>> &coordinates, int matSize, std::vector<std::vector<int>> &matrix, std::list<int> obstacles)  {
+void initializeConnections(std::vector<std::pair<int,int>> &coordinates, int matSize, std::vector<std::vector<int>> &matrix, std::unordered_set<int> obstacles)  {
     // Connections initialized
     for(int i=0;i<matSize;i++) {
         matrix.push_back(std::vector<int>(matSize, 0));
+
+        if(std::find(begin(obstacles), end(obstacles), i) != end(obstacles))
+            continue;
+
         for(int j=0;j<matSize;j++) {
-            
+
+
+            if(std::find(begin(obstacles), end(obstacles), j) != end(obstacles)){
+                matrix[i][j] = 0;
+                continue;
+            }
             // Sideways connections
             if(coordinates[i].first == coordinates[j].first) {
                 if(abs(coordinates[i].second - coordinates[j].second) == 1)
@@ -254,14 +378,14 @@ void initializeConnections(std::vector<std::pair<int,int>> &coordinates, int mat
             }
 
             // Diagonal connections
+
             else if(abs(coordinates[i].first - coordinates[j].first) == 1 && abs(coordinates[i].second - coordinates[j].second) == 1)
                 matrix[i][j] = 1;
             
             // Set obstacles
             
 
-            if(std::find(begin(obstacles), end(obstacles), i) != end(obstacles) || std::find(begin(obstacles), end(obstacles), j) != end(obstacles))
-                matrix[i][j] = 0;
+            
 
 
            

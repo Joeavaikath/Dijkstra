@@ -122,7 +122,7 @@ class Dijkstra {
 
                 int v = adjList[u][i].id;
 
-                if (!closed[v] && adjList[u][i].distance!=0  && dist[u] + adjList[u][i].distance < dist[v])
+                if (!closed[v] && dist[u] + adjList[u][i].distance < dist[v])
                 // if (matrix[u][v]!=0  && dist[u] + matrix[u][v] < dist[v])
                 {   
 
