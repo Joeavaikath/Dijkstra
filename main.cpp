@@ -272,7 +272,15 @@ int main() {
 
     printf("\n Max open list size: %d\n Max closed list size: %d", answer3.maxOpenSize, answer3.maxCloseSize);
 
-    printf("\n Source: %d Destination: %d", source, destination);
+
+    printf("\n\n \t\tRun Summary:\n\n");
+    printf("\n \tSource: %d ----------------> Destination: %d\n\n", source, destination);
+    printf("\n\tDijkstra\tA-Star-I\tA-Star-A");
+    printf("\nTime:\t%ld\t\t%ld\t\t%ld", durationDijk.count(), durationAStar.count(), durationAStarA.count());
+    printf("\nPath:\t%d\t\t%d\t\t%d", (int)answer.path.size(), (int)answer2.path.size(), (int)answer3.path.size());
+    printf("\nOpen:\t%d\t\t%d\t\t%d", answer.maxOpenSize, answer2.maxOpenSize, answer3.maxOpenSize);
+    printf("\nClose:\t%d\t\t%d\t\t%d", answer.maxCloseSize, answer2.maxCloseSize, answer3.maxCloseSize);
+    printf("\n-----------------------------------------------------------------------");
 
 
     return 0;
