@@ -226,62 +226,85 @@ int main() {
     aStar star(1, 5);
     
     aStar star2(1, 1);
+
+
+    int runs = 100;
+    
+    std::ofstream file1("dijkstra.txt");
+    std::ofstream file2("astarI.txt");
+    std::ofstream file3("astarA.txt");
+
+    while(runs-- >0) {
+
+        printf("\n--------- RUN %d--------", runs);
+
+
+        source = rand() % matSize;
+        destination = rand() % matSize;
+
+        while(std::find(begin(obstacles), end(obstacles), source) != end(obstacles))
+            source = rand() % matSize;
+
+        while(destination == source || std::find(begin(obstacles), end(obstacles), destination) != end(obstacles))
+            destination = rand() % matSize;
+
+        printf("\n Source: %d Destination: %d", source, destination);
     
     
 
-    start = std::chrono::high_resolution_clock::now();
-    result answer = dij.pathFindDijkstra(g, source, destination);
-    stop = std::chrono::high_resolution_clock::now();
-    durationDijk = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+        start = std::chrono::high_resolution_clock::now();
+        result answer = dij.pathFindDijkstra(g, source, destination);
+        stop = std::chrono::high_resolution_clock::now();
+        durationDijk = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
-    start = std::chrono::high_resolution_clock::now();
-    result answer2 = star.pathFind_AStar(g, source ,destination);
-    stop = std::chrono::high_resolution_clock::now();
-    durationAStar = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+        start = std::chrono::high_resolution_clock::now();
+        result answer2 = star.pathFind_AStar(g, source ,destination);
+        stop = std::chrono::high_resolution_clock::now();
+        durationAStar = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
-    start = std::chrono::high_resolution_clock::now();
-    result answer3 = star2.pathFind_AStar(g, source ,destination);
-    stop = std::chrono::high_resolution_clock::now();
-    durationAStarA = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+        start = std::chrono::high_resolution_clock::now();
+        result answer3 = star2.pathFind_AStar(g, source ,destination);
+        stop = std::chrono::high_resolution_clock::now();
+        durationAStarA = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
-    printf("\n\n---------DIJKS---------\n\n");
-    printf("\n Done with Dijkstra : %ld", durationDijk.count());
-    printf("\n Path Length: %d\n", (int)answer.path.size());
-    for(int i: answer.path) {
-        printf("%d-->", i);
+        printf("\n\n---------DIJKS---------\n\n");
+        printf("\n Done with Dijkstra : %ld", durationDijk.count());
+        printf("\n Path Length: %d\n", (int)answer.path.size());
+        for(int i: answer.path) {
+            printf("%d-->", i);
+        }
+
+        printf("\n Max open list size: %d\n Max closed list size: %d", answer.maxOpenSize, answer.maxCloseSize);
+
+
+        printf("\n\n--------ASTAR---------\n\n");
+        printf("\n Done with A-Star (Inadmissable) : %ld", durationAStar.count());
+        printf("\n Path Length: %d\n", (int)answer2.path.size());
+        for(int i: answer2.path) {
+            printf("%d-->", i);
+        }
+
+        printf("\n Max open list size: %d\n Max closed list size: %d", answer2.maxOpenSize, answer2.maxCloseSize);
+
+        printf("\n\n--------ASTAR---------\n\n");
+        printf("\n Done with A-Star (Admissable) : %ld", durationAStarA.count());
+        printf("\n Path Length: %d\n", (int)answer3.path.size());
+        for(int i: answer3.path) {
+            printf("%d-->", i);
+        }
+
+        printf("\n Max open list size: %d\n Max closed list size: %d", answer3.maxOpenSize, answer3.maxCloseSize);
+
+
+        printf("\n\n \t\tRun Summary:\n\n");
+        printf("\n \tSource: %d ----------------> Destination: %d\n\n", source, destination);
+        printf("\n\tDijkstra\tA-Star-I\tA-Star-A");
+        printf("\nTime:\t%ld\t\t%ld\t\t%ld", durationDijk.count(), durationAStar.count(), durationAStarA.count());
+        printf("\nPath:\t%d\t\t%d\t\t%d", (int)answer.path.size(), (int)answer2.path.size(), (int)answer3.path.size());
+        printf("\nOpen:\t%d\t\t%d\t\t%d", answer.maxOpenSize, answer2.maxOpenSize, answer3.maxOpenSize);
+        printf("\nClose:\t%d\t\t%d\t\t%d", answer.maxCloseSize, answer2.maxCloseSize, answer3.maxCloseSize);
+        printf("\n-----------------------------------------------------------------------");
     }
-
-    printf("\n Max open list size: %d\n Max closed list size: %d", answer.maxOpenSize, answer.maxCloseSize);
-
-
-    printf("\n\n--------ASTAR---------\n\n");
-    printf("\n Done with A-Star (Inadmissable) : %ld", durationAStar.count());
-    printf("\n Path Length: %d\n", (int)answer2.path.size());
-    for(int i: answer2.path) {
-        printf("%d-->", i);
-    }
-
-    printf("\n Max open list size: %d\n Max closed list size: %d", answer2.maxOpenSize, answer2.maxCloseSize);
-
-    printf("\n\n--------ASTAR---------\n\n");
-    printf("\n Done with A-Star (Admissable) : %ld", durationAStarA.count());
-    printf("\n Path Length: %d\n", (int)answer3.path.size());
-    for(int i: answer3.path) {
-        printf("%d-->", i);
-    }
-
-    printf("\n Max open list size: %d\n Max closed list size: %d", answer3.maxOpenSize, answer3.maxCloseSize);
-
-
-    printf("\n\n \t\tRun Summary:\n\n");
-    printf("\n \tSource: %d ----------------> Destination: %d\n\n", source, destination);
-    printf("\n\tDijkstra\tA-Star-I\tA-Star-A");
-    printf("\nTime:\t%ld\t\t%ld\t\t%ld", durationDijk.count(), durationAStar.count(), durationAStarA.count());
-    printf("\nPath:\t%d\t\t%d\t\t%d", (int)answer.path.size(), (int)answer2.path.size(), (int)answer3.path.size());
-    printf("\nOpen:\t%d\t\t%d\t\t%d", answer.maxOpenSize, answer2.maxOpenSize, answer3.maxOpenSize);
-    printf("\nClose:\t%d\t\t%d\t\t%d", answer.maxCloseSize, answer2.maxCloseSize, answer3.maxCloseSize);
-    printf("\n-----------------------------------------------------------------------");
-
 
     return 0;
 }
