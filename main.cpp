@@ -228,11 +228,11 @@ int main() {
     aStar star2(1, 1);
 
 
-    int runs = 100;
+    int runs = 2;
     
-    std::ofstream file1("dijkstra.txt");
-    std::ofstream file2("astarI.txt");
-    std::ofstream file3("astarA.txt");
+    std::ofstream file1("dijkstra.txt", std::ios_base::app);
+    std::ofstream file2("astarI.txt", std::ios_base::app);
+    std::ofstream file3("astarA.txt", std::ios_base::app);
 
     while(runs-- >0) {
 
@@ -304,7 +304,42 @@ int main() {
         printf("\nOpen:\t%d\t\t%d\t\t%d", answer.maxOpenSize, answer2.maxOpenSize, answer3.maxOpenSize);
         printf("\nClose:\t%d\t\t%d\t\t%d", answer.maxCloseSize, answer2.maxCloseSize, answer3.maxCloseSize);
         printf("\n-----------------------------------------------------------------------");
+
+        file1 << durationDijk.count();
+        file1 <<" ";
+        file1 <<(int)answer.path.size();
+        file1 << " ";
+        file1 <<answer.maxOpenSize;
+        file1 << " ";
+        file1 <<answer.maxCloseSize;
+        file1 << "\n";
+
+        file2 << durationAStar.count();
+        file2 <<" ";
+        file2 <<(int)answer2.path.size();
+        file2 << " ";
+        file2 <<answer2.maxOpenSize;
+        file2 << " ";
+        file2 <<answer2.maxCloseSize;
+        file2 << "\n";
+
+        file3 << durationAStarA.count();
+        file3 <<" ";
+        file3 <<(int)answer3.path.size();
+        file3 << " ";
+        file3 <<answer3.maxOpenSize;
+        file3 << " ";
+        file3 <<answer3.maxCloseSize;
+        file3 << "\n";
+
+
+        
+
     }
+
+    file1.close();
+    file2.close();
+    file3.close();
 
     return 0;
 }
