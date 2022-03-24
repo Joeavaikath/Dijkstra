@@ -237,9 +237,9 @@ int main() {
 
     int runs = 100;
     
-    std::ofstream file1("dijkstra.txt");
-    std::ofstream file2("astarI.txt");
-    std::ofstream file3("astarA.txt");
+    std::ofstream file1("outputs/dijkstra.txt");
+    std::ofstream file2("outputs/astarI.txt");
+    std::ofstream file3("outputs/astarA.txt");
 
     while(runs-- >0) {
 
