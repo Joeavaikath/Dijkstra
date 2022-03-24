@@ -230,9 +230,9 @@ int main() {
 
     int runs = 2;
     
-    std::ofstream file1("dijkstra.txt", std::ios_base::app);
-    std::ofstream file2("astarI.txt", std::ios_base::app);
-    std::ofstream file3("astarA.txt", std::ios_base::app);
+    std::ofstream file1("outputs/dijkstra.txt", std::ios_base::app);
+    std::ofstream file2("outputs/astarI.txt", std::ios_base::app);
+    std::ofstream file3("outputs/astarA.txt", std::ios_base::app);
 
     while(runs-- >0) {
 
